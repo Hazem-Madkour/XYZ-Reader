@@ -2,10 +2,10 @@ package com.example.xyzreader.holders;
 
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,23 +25,23 @@ public class ArticleHolder extends RecyclerView.ViewHolder {
 
     static private final GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
 
-
-    ImageView thumbnailView;
-    TextView titleView;
-    TextView subtitleView;
+    private ImageView thumbnailView;
+    private TextView titleView;
+    private TextView subtitleView;
 
     public ArticleHolder(View view) {
         super(view);
         thumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
         titleView = (TextView) view.findViewById(R.id.article_title);
         subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
+        titleView.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "Rosario-Regular.ttf"));
+        subtitleView.setTypeface(Typeface.createFromAsset(itemView.getContext().getAssets(), "Rosario-Regular.ttf"));
     }
 
     public void fillViews(final Cursor cursor) {
         titleView.setText(cursor.getString(ArticleLoader.Query.TITLE));
         Date publishedDate = parsePublishedDate(cursor);
         if (!publishedDate.before(START_OF_EPOCH.getTime())) {
-
             subtitleView.setText(Html.fromHtml(
                     DateUtils.getRelativeTimeSpanString(
                             publishedDate.getTime(),
@@ -56,7 +56,7 @@ public class ArticleHolder extends RecyclerView.ViewHolder {
                             + cursor.getString(ArticleLoader.Query.AUTHOR)));
         }
 
-        Glide.with(itemView.getContext()).load(cursor.getString(ArticleLoader.Query.THUMB_URL)).asBitmap().placeholder(R.mipmap.ic_launcher).error(R.drawable.add_fab_background).listener(new RequestListener<String, Bitmap>() {
+        Glide.with(itemView.getContext()).load(cursor.getString(ArticleLoader.Query.THUMB_URL)).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.img_error_no_img).listener(new RequestListener<String, Bitmap>() {
             @Override
             public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
                 return false;
@@ -80,5 +80,4 @@ public class ArticleHolder extends RecyclerView.ViewHolder {
             return new Date();
         }
     }
-
 }
