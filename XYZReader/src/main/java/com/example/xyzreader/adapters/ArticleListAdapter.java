@@ -46,10 +46,6 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleHolder> {
     public void onBindViewHolder(final ArticleHolder holder, int position) {
         mCursor.moveToPosition(position);
         holder.fillViews(mCursor);
-//            holder.thumbnailView.setImageUrl(
-//                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
-//                    ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
-//            holder.thumbnailView.setAspectRatio(mCursor.getFloat(ArticleLoader.Query.ASPECT_RATIO));
     }
 
     @Override
