@@ -3,13 +3,18 @@ package com.example.xyzreader.ui;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
+import android.widget.ImageView;
 
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
+import com.example.xyzreader.UtilityTransition;
 import com.example.xyzreader.adapters.PagerAdapter;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
@@ -43,6 +48,9 @@ public class ArticleDetailActivity extends AppCompatActivity implements LoaderMa
                 mSelectedItemId = mStartId;
             }
         }
+
+        UtilityTransition.setupEnterFadeAnimation(this);
+        UtilityTransition.setupExitFadeAnimation(this);
     }
 
     @Override
@@ -61,11 +69,35 @@ public class ArticleDetailActivity extends AppCompatActivity implements LoaderMa
             mCursor.moveToFirst();
             for (mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
+                    changeImage();
                     mPager.setCurrentItem(mCursor.getPosition(), false);
                     break;
                 }
             }
             mStartId = 0;
+        }
+    }
+
+
+    public void changeImage() {
+        try {
+            ImageLoaderHelper.getInstance(this).getImageLoader()
+                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
+                        @Override
+                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
+                            Bitmap bitmap = imageContainer.getBitmap();
+                            if (bitmap != null) {
+                                ((ImageView) findViewById(R.id.imgTitle)).setImageBitmap(imageContainer.getBitmap());
+                            }
+                        }
+
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+
+                        }
+                    });
+
+        } catch (Exception ex) {
         }
     }
 

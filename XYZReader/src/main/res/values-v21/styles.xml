@@ -1,0 +1,14 @@
+<resources>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowEnterTransition">@transition/activity_fade</item>
+        <item name="android:windowExitTransition">@transition/activity_explode</item>
+
+        <item name="android:windowSharedElementEnterTransition">@transition/changeboundswitharc</item>
+        <item name="android:windowSharedElementExitTransition">@transition/changeboundswitharc</item>
+    </style>
+
+</resources>

@@ -1,6 +1,8 @@
 package com.example.xyzreader.adapters;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
@@ -42,10 +44,16 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleHolder> {
         View view = mActivity.getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
         final ArticleHolder vh = new ArticleHolder(view);
         view.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
-                mActivity.startActivity(new Intent(Intent.ACTION_VIEW,
-                        ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
+                if (isSdkMore21) {
+                    ActivityOptions transitionActivityOptions = ActivityOptions.makeSceneTransitionAnimation(mActivity, vh.thumbnailView, mActivity.getString(R.string.article_image_transition));
+                    mActivity.startActivity(new Intent(Intent.ACTION_VIEW,
+                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))), transitionActivityOptions.toBundle());
+                } else
+                    mActivity.startActivity(new Intent(Intent.ACTION_VIEW,
+                            ItemsContract.Items.buildItemUri(getItemId(vh.getAdapterPosition()))));
             }
         });
         return vh;

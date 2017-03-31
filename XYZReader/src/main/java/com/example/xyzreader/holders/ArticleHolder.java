@@ -25,7 +25,7 @@ public class ArticleHolder extends RecyclerView.ViewHolder {
 
     static private final GregorianCalendar START_OF_EPOCH = new GregorianCalendar(2, 1, 1);
 
-    private ImageView thumbnailView;
+    public ImageView thumbnailView;
     private TextView titleView;
     private TextView subtitleView;
 
