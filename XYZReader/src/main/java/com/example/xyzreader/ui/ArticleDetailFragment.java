@@ -7,7 +7,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.graphics.Palette;
@@ -161,7 +160,6 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
-//            bodyView.setText(mCursor.getString(ArticleLoader.Query.BODY));
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
@@ -181,12 +179,14 @@ public class ArticleDetailFragment extends Fragment implements
 
                         }
                     });
-            bodyView.postDelayed(new Runnable() {
+            final String details = mCursor.getString(ArticleLoader.Query.BODY);
+            bodyView.setText(details.substring(0, (details.length() <= 300 ? details.length() : 300)));
+            mRootView.findViewById(R.id.txtSeeMore).setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void run() {
-                    bodyView.setText(mCursor.getString(ArticleLoader.Query.BODY));
+                public void onClick(View v) {
+                    bodyView.setText(details);
                 }
-            }, 200);
+            });
         }
     }
 

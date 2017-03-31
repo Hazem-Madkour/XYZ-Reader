@@ -4,13 +4,10 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.WindowInsets;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.adapters.PagerAdapter;
@@ -34,7 +31,7 @@ public class ArticleDetailActivity extends AppCompatActivity implements LoaderMa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_detail);
         getLoaderManager().initLoader(0, null, this);
-        mPagerAdapter = new PagerAdapter(getFragmentManager()) ;
+        mPagerAdapter = new PagerAdapter(getFragmentManager());
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(mPagerAdapter);
         mPager.setPageMargin((int) TypedValue
@@ -62,14 +59,11 @@ public class ArticleDetailActivity extends AppCompatActivity implements LoaderMa
         // Select the start ID
         if (mStartId > 0) {
             mCursor.moveToFirst();
-            // TODO: optimize
-            while (!mCursor.isAfterLast()) {
+            for (mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
-                    final int position = mCursor.getPosition();
-                    mPager.setCurrentItem(position, false);
+                    mPager.setCurrentItem(mCursor.getPosition(), false);
                     break;
                 }
-                mCursor.moveToNext();
             }
             mStartId = 0;
         }
