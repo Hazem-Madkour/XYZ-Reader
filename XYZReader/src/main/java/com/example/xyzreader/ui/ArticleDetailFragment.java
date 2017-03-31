@@ -107,7 +107,7 @@ public class ArticleDetailFragment extends Fragment implements
             public void onClick(View view) {
                 startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
                         .setType("text/plain")
-                        .setText("Some sample text")
+                        .setText(mCursor.getString(ArticleLoader.Query.TITLE))
                         .getIntent(), getString(R.string.action_share)));
             }
         });
@@ -142,7 +142,7 @@ public class ArticleDetailFragment extends Fragment implements
                         @Override
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
                             Bitmap bitmap = imageContainer.getBitmap();
-                            if (bitmap != null ) {
+                            if (bitmap != null) {
                                 Palette p = Palette.generate(bitmap, 12);
                                 mMutedColor = p.getDarkMutedColor(0xFF333333);
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
@@ -198,7 +198,7 @@ public class ArticleDetailFragment extends Fragment implements
 
             }
             final String details = mCursor.getString(ArticleLoader.Query.BODY);
-            bodyView.setText(details.substring(0, (details.length() <= 300 ? details.length() : 300)));
+            bodyView.setText(details.substring(0, (details.length() <= 200 ? details.length() : 200)));
             mRootView.findViewById(R.id.txtSeeMore).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
