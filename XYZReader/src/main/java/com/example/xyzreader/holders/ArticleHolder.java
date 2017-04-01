@@ -56,20 +56,7 @@ public class ArticleHolder extends RecyclerView.ViewHolder {
                             + cursor.getString(ArticleLoader.Query.AUTHOR)));
         }
 
-        Glide.with(itemView.getContext()).load(cursor.getString(ArticleLoader.Query.THUMB_URL)).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.img_error_no_img).listener(new RequestListener<String, Bitmap>() {
-            @Override
-            public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
-                return false;
-            }
-
-            @Override
-            public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                thumbnailView.getLayoutParams().height = thumbnailView.getMeasuredWidth() * resource.getHeight() / resource.getWidth();
-                thumbnailView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                thumbnailView.requestLayout();
-                return false;
-            }
-        }).into(thumbnailView);
+        Glide.with(itemView.getContext()).load(cursor.getString(ArticleLoader.Query.THUMB_URL)).asBitmap().placeholder(R.drawable.ic_loading).error(R.drawable.img_error_no_img).into(thumbnailView);
     }
 
     private Date parsePublishedDate(Cursor cursor) {

@@ -8,7 +8,9 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ShareCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -49,6 +51,7 @@ public class ArticleDetailFragment extends Fragment implements
 
     private ImageView mPhotoView;
     private TextView bodyView;
+    private FloatingActionButton fab;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -101,17 +104,19 @@ public class ArticleDetailFragment extends Fragment implements
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
         mPhotoView = (ImageView) getActivity().findViewById(R.id.imgTitle);
-
-        mRootView.findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.share_fab);
+        ((NestedScrollView) mRootView.findViewById(R.id.nestedScrollView)).setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
-            public void onClick(View view) {
-                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
-                        .setType("text/plain")
-                        .setText(mCursor.getString(ArticleLoader.Query.TITLE))
-                        .getIntent(), getString(R.string.action_share)));
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                int diff = (v.getChildAt(v.getChildCount() - 1).getBottom() - (v.getHeight() + v.getScrollY()));
+                if (diff == 0)
+                    fab.show();
+                else if (scrollY - oldScrollY > -1)
+                    fab.hide();
+                else
+                    fab.show();
             }
         });
-
         bindViews();
         return mRootView;
     }
@@ -132,11 +137,22 @@ public class ArticleDetailFragment extends Fragment implements
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser)
-            changeImage();
+            changeViews();
     }
 
-    public void changeImage() {
+    public void changeViews() {
         try {
+            fab.show();
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(getActivity())
+                            .setType("text/plain")
+                            .setText(mCursor.getString(ArticleLoader.Query.TITLE))
+                            .getIntent(), getString(R.string.action_share)));
+                }
+            });
+
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
@@ -170,7 +186,6 @@ public class ArticleDetailFragment extends Fragment implements
         TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
         bylineView.setMovementMethod(new LinkMovementMethod());
         bodyView = (TextView) mRootView.findViewById(R.id.article_body);
-
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
         if (mCursor != null) {
@@ -198,12 +213,12 @@ public class ArticleDetailFragment extends Fragment implements
 
             }
             final String details = mCursor.getString(ArticleLoader.Query.BODY);
-            bodyView.setText(details.substring(0, (details.length() <= 200 ? details.length() : 200)));
+            bodyView.setText(Html.fromHtml(details.substring(0, (details.length() <= 200 ? details.length() : 200))));
             mRootView.findViewById(R.id.txtSeeMore).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    bodyView.setText(details);
-                    mRootView.findViewById(R.id.txtSeeMore).setVisibility(View.GONE);
+                    bodyView.setText(Html.fromHtml(details));
+                    v.setVisibility(View.INVISIBLE);
                 }
             });
             getView().setFocusableInTouchMode(true);

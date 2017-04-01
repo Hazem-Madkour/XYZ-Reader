@@ -17,12 +17,11 @@
         <!--suppress AndroidLintContentDescription -->
         <ImageView
             android:id="@+id/thumbnail"
-            android:transitionName="article_image_transition"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:background="@color/photo_placeholder"
             android:contentDescription="@string/article_thumbnail"
-            android:scaleType="centerInside"/>
+            android:scaleType="centerInside" />
 
         <TextView
             android:id="@+id/article_title"

@@ -1,15 +1,19 @@
 package com.example.xyzreader.ui;
 
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
@@ -69,7 +73,7 @@ public class ArticleDetailActivity extends AppCompatActivity implements LoaderMa
             mCursor.moveToFirst();
             for (mCursor.moveToFirst(); !mCursor.isAfterLast(); mCursor.moveToNext()) {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
-                    changeImage();
+                    changeViews();
                     mPager.setCurrentItem(mCursor.getPosition(), false);
                     break;
                 }
@@ -79,8 +83,17 @@ public class ArticleDetailActivity extends AppCompatActivity implements LoaderMa
     }
 
 
-    public void changeImage() {
+    public void changeViews() {
         try {
+            findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                startActivity(Intent.createChooser(ShareCompat.IntentBuilder.from(ArticleDetailActivity.this)
+                        .setType("text/plain")
+                        .setText(mCursor.getString(ArticleLoader.Query.TITLE))
+                        .getIntent(), getString(R.string.action_share)));
+                }
+            });
             ImageLoaderHelper.getInstance(this).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
